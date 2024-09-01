@@ -35,7 +35,7 @@ export default function Home() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a href="https://github.com/patelheet30" target="_blank" rel="noopener">
+                    <a href="https://github.com/patelheet30/Statstify" target="_blank" rel="noopener">
                       <FolderCode size={32} className="hover:text-spotify-green"/>
                     </a>
                   </TooltipTrigger>

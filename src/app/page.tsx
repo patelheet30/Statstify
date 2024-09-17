@@ -15,7 +15,7 @@ export default function Home() {
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
       await storeFilesInIndexedDB(acceptedFiles);
-      router.push("/viewdata");
+      router.push("/loading");
     }, [router]);
 
     const { getRootProps, getInputProps } = useDropzone({

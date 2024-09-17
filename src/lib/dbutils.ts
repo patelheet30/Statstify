@@ -17,13 +17,20 @@ export async function initDB() {
   return db;
 }
 
-export async function fetchDataFromIndexedDB() {
-  const db = await openDB(DB_NAME, DB_VERSION);
+export async function fetchDataFromIndexedDB(p0: string) {
+  const db = await initDB();
   const tx = db.transaction(STORE_NAME, "readonly");
   const store = tx.objectStore(STORE_NAME);
-  const allData = await store.getAll();
+  const data = await store.get(p0);
+  
+  if (data && data.file instanceof Blob) {
+    const text = await data.file.text();
+    const jsonData = JSON.parse(text);
+    return jsonData;
+  }
+
   await tx.done;
-  return allData;
+  return null;
 }
 
 async function unzipFiles(acceptedFiles: File[]) {

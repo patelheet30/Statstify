@@ -22,6 +22,10 @@
   }
 }
 
+.remove-clear-button::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -17,10 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={montserrat.className}>
+    <html lang="en" className="dark h=full">
+      <body className={`${montserrat.className} h-full`}>
         <UserProvider>
-          {children}
+          <div className="h-full">
+            {children}
+          </div>
         </UserProvider>
       </body>
     </html>

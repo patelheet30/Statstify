@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { Search, X } from "lucide-react";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { format } from "date-fns";
 
@@ -19,7 +19,7 @@ interface NavBarProps {
 }
 
 
-const Navbar: React.FC<NavBarProps> = ({user}) => {
+const Navbar: React.FC<NavBarProps> = ({ user }) => {
 
     const [search, setSearch] = useState("");
 
@@ -27,35 +27,35 @@ const Navbar: React.FC<NavBarProps> = ({user}) => {
         if (!dateUnformat) return "N/A";
         const dateFormat = new Date(dateUnformat);
         return format(dateFormat, "do MMM yyyy");
-      }
+    }
 
     return (
         <nav>
             <ul className="place-content-between flex flex-row">
                 <li>
-                    <img src={`/static/logo.png`} alt="logo" className="size-14"/>
+                    <img src={`/static/logo.png`} alt="logo" className="size-14" />
                 </li>
                 <li className="min-w-96 content-center">
                     <form role="search" className="flex flex-row items-center w-full space-x-3 border-none bg-zinc-800 rounded-full">
                         <div className="pl-3 py-2">
-                            <Search size={32}/>
+                            <Search size={32} />
                         </div>
-                        <input 
-                            type="search" 
-                            placeholder="What do you want to look up?" 
+                        <input
+                            type="search"
+                            placeholder="What do you want to look up?"
                             className="border-none bg-transparent flex-grow w-full focus:outline-none remove-clear-button"
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)} 
+                            onChange={(e) => setSearch(e.target.value)}
                         />
-                        {search && <button onClick={() => setSearch("")} className="pr-3"><X size={32} className="text-zinc-400"/></button>}
+                        {search && <button onClick={() => setSearch("")} className="pr-3"><X size={32} className="text-zinc-400" /></button>}
                     </form>
                 </li>
                 <li>
                     <HoverCard>
                         <HoverCardTrigger asChild>
-                            <img 
+                            <img
                                 src={user?.pfpURL || "/static/Default_pfp.svg.png"}
-                                alt="logo" 
+                                alt="logo"
                                 className="size-14 border-8 rounded-full border-zinc-700 p-1"
                             />
                         </HoverCardTrigger>
@@ -72,6 +72,6 @@ const Navbar: React.FC<NavBarProps> = ({user}) => {
             </ul>
         </nav>
     );
-} 
+}
 
 export default Navbar;

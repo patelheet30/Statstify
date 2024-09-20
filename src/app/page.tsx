@@ -11,20 +11,20 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const onDrop = useCallback(async (acceptedFiles: File[]) => {
-      await storeFilesInIndexedDB(acceptedFiles);
-      router.push("/loading");
-    }, [router]);
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    await storeFilesInIndexedDB(acceptedFiles);
+    router.push("/loading");
+  }, [router]);
 
-    const { getRootProps, getInputProps } = useDropzone({
-      onDrop,
-      accept: {
-        "application/zip": [".zip"],
-        "application/json": [".json"],
-        },
-    });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "application/zip": [".zip"],
+      "application/json": [".json"],
+    },
+  });
 
 
   return (
@@ -37,14 +37,14 @@ export default function Home() {
           </h2>
           <Description />
           <section className="flex flex-row space-x-8">
-           <TooltipLinks />
+            <TooltipLinks />
           </section>
         </section>
         <section className="space-y-8 flex flex-col items-center">
           <h3 className="text-3xl font-medium">Upload Your Spotify Data</h3>
           <div
             id="FileDropper"
-            className="max-w-3xl p-16 flex flex-col items-center rounded-lg border-2 border-dashed border-gray-200 space-y-4 hover:border-spotify-green"
+            className="max-w-3xl p-16 flex flex-col items-center rounded-lg border-4 border-dashed border-gray-200 space-y-4 hover:border-spotify-green"
             {...getRootProps()}
           >
             <input {...getInputProps()} />

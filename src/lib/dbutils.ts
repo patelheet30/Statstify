@@ -17,6 +17,15 @@ export async function initDB() {
   return db;
 }
 
+export async function gatherFileNames() {
+  const db = await initDB();
+  const tx = db.transaction(STORE_NAME, "readonly");
+  const store = tx.objectStore(STORE_NAME);
+  const keys = await store.getAllKeys();
+  await tx.done;
+  return keys;
+}
+
 export async function fetchDataFromIndexedDB(p0: string) {
   const db = await initDB();
   const tx = db.transaction(STORE_NAME, "readonly");
@@ -71,4 +80,35 @@ export async function storeFilesInIndexedDB(acceptedFiles: File[]) {
   }
 
   await tx.done;
+}
+
+export async function storeMapDatainIndexedDB(mapData: Map<string, any>) {
+  const db = await initDB();
+  const tx = db.transaction(STORE_NAME, "readwrite");
+  const store = tx.objectStore(STORE_NAME);
+
+  for (const [key, value] of mapData) {
+    const jsonFile = new File([JSON.stringify(value)], key, {
+      type: "application/json",
+    });
+    await store.put({ name: key, file: jsonFile });
+  }
+
+  await tx.done;
+}
+
+export async function gatherMapData(key: string) {
+  const db = await initDB();
+  const tx = db.transaction(STORE_NAME, "readonly");
+  const store = tx.objectStore(STORE_NAME);
+  const data = await store.get(key);
+
+  if (data && data.file instanceof Blob) {
+    const text = await data.file.text();
+    const jsonData = JSON.parse(text);
+    return jsonData;
+  }
+
+  await tx.done;
+  return null;
 }

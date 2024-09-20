@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/User";
 import { processUserData } from "@/lib/userUtils";
+import { processListeningHistory } from "@/lib/dataProcessor";
+import { storeMapDatainIndexedDB } from "@/lib/dbutils";
 
 export default function Loading() {
   const router = useRouter();
@@ -17,14 +19,24 @@ export default function Loading() {
     async function processData() {
       if (hasProcessed.current) return;
       hasProcessed.current = true;
-        
+
       setLoadingText("Gathering your data...");
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setLoadingText("Processing your User information...");
 
       const success = await processUserData(timeout, setUser);
       if (success) {
-        router.push("/viewdata");
+        setLoadingText("Processing your listening history...");
+        const songsProcessed = await processListeningHistory();
+
+        if (songsProcessed.length === 0) {
+          setLoadingText("No songs found in your data.");
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          router.push("/");
+        } else {
+          await storeMapDatainIndexedDB(new Map([["songs", songsProcessed]]));
+          router.push("/viewdata");
+        }
       }
     }
 

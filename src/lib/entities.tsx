@@ -3,6 +3,9 @@ export interface Song {
     trackID: string;
     artistName: string;
     albumName: string;
-    msPlayed: number; // Duration in milliseconds
-    whenPlayed: string; // ISO 8601 date string
+    msPlayed: number;
+    whenPlayed: string;
+    coverArtURLLarge: string;
+    coverArtURLMedium: string;
+    coverArtURLSmall: string;
   }

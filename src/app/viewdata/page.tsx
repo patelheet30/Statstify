@@ -43,7 +43,7 @@ export default function ViewData() {
             {topfifty.map((song) => (
               <SongCard
                 key={song.trackID}
-                cover="N/A"
+                cover={song.coverArtURLSmall}
                 trackName={song.trackName}
                 artistName={song.artistName}
                 listeningTime={Math.floor(song.msPlayed / 60000)}

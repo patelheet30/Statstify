@@ -8,29 +8,48 @@ import { processUserData } from "@/lib/userUtils";
 import { processListeningHistory } from "@/lib/dataProcessor";
 import { storeMapDatainIndexedDB } from "@/lib/dbutils";
 
-const randomFacts = [
-  "Spotify has over 70 million tracks.",
-  "Spotify was launched in 2008.",
-  "Spotify is available in over 90 countries.",
-  "Spotify has over 345 million active users.",
-  "Spotify offers both free and premium subscriptions.",
-  "Spotify's most-streamed song is 'Shape of You' by Ed Sheeran.",
-  "Spotify's most-followed artist is Drake.",
-  "Spotify Wrapped is an annual feature that shows users their listening habits.",
-  "Spotify uses machine learning to recommend songs.",
-  "Spotify's Discover Weekly playlist is updated every Monday."
-];
-
 export default function Loading() {
   const router = useRouter();
   const timeout = 2000;
   const hasProcessed = useRef(false);
   const { setUser } = useUser();
   const [loadingText, setLoadingText] = useState("Processing your data.");
-  const [randomFact, setRandomFact] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const barHeights = useRef<number[]>([]);
   const targetHeights = useRef<number[]>([]);
+  const [facts, setFacts] = useState<string[]>([]);
+  const [randomFact, setRandomFact] = useState<string>("");
+
+  useEffect(() => {
+    const fetchFacts = async () => {
+      try {
+        const response = await fetch('/api/randomFacts');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setFacts(data.facts);
+      } catch (error) {
+        console.error('Failed to fetch facts:', error);
+      }
+    };
+
+    fetchFacts();
+  }, []);
+
+  useEffect(() => {
+    const updateRandomFact = () => {
+      if (facts.length > 0) {
+        const randomIndex = Math.floor(Math.random() * facts.length);
+        setRandomFact(facts[randomIndex]);
+      }
+    };
+
+    updateRandomFact(); // Set initial fact
+    const intervalId = setInterval(updateRandomFact, 5000); // Update fact every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [facts]);
 
   useEffect(() => {
     async function processData() {
@@ -44,7 +63,7 @@ export default function Loading() {
       const success = await processUserData(timeout, setUser);
       if (success) {
         setLoadingText("Processing your listening history...");
-        const songsProcessed = await processListeningHistory();
+        const songsProcessed = await processListeningHistory(setLoadingText);
 
         if (songsProcessed.length === 0) {
           setLoadingText("No songs found in your data.");
@@ -60,17 +79,7 @@ export default function Loading() {
     processData();
   }, [router, setUser]);
 
-  useEffect(() => {
-    const updateRandomFact = () => {
-      const randomIndex = Math.floor(Math.random() * randomFacts.length);
-      setRandomFact(randomFacts[randomIndex]);
-    };
 
-    updateRandomFact();
-    const intervalId = setInterval(updateRandomFact, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;

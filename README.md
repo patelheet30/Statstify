@@ -8,9 +8,9 @@ Statstify is a powerful tool that analyses your Spotify listening history to pro
 - [x] Design a home page
 - [x] Find an efficient way to store data on client-side for processing
 - [ ] About the website section/page featuring author info, tech stack, credentials etc.
-- [ ] Design a Spotify based UI for data-viewing
+- [x] Design a Spotify based UI for data-viewing
 - [ ] Process album data
-- [ ] Link with Spotify to get images for album
+- [x] Link with Spotify to get images for album
 - [ ] Process artist data
 - [ ] Link with Spotify to get images for artists
 - [ ] Maybe optimise?????

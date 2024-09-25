@@ -2,7 +2,8 @@ import { Song } from "@/lib/entities";
 import { fetchDataFromIndexedDB, gatherFileNames } from "./dbutils";
 import { getTracksInformation } from "./spotifyAPI";
 
-export async function processListeningHistory(): Promise<Song[]> {
+export async function processListeningHistory(updateLoadingText: (text: string) => void): Promise<Song[]> {
+    updateLoadingText("Processing your listening history...");
 
     try {
         // create an empty map to store files from indexedDB
@@ -55,6 +56,8 @@ export async function processListeningHistory(): Promise<Song[]> {
                 }
             }
         }
+
+        updateLoadingText("Fetching track information from the Spotify API (This may take several minutes)...");
 
         const sortedArray = Array.from(songsMap.values()).sort((a, b) => b.msPlayed - a.msPlayed);
 

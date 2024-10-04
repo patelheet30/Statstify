@@ -11,12 +11,14 @@ interface SongCardProps {
 const SongCard: React.FC<SongCardProps> = ({ cover, trackName, artistName, listeningTime }) => {
     const placeHolderImage = `static/placeholdercover.jpg`
 
+    const numberFormatter = new Intl.NumberFormat("en-US");
+
     return (
         <div className="flex items-center rounded-lg p-2 max-w-80 hover:border-none hover:bg-[#1f1f1f]">
             <img src={cover !== "N/A" ? cover : placeHolderImage} alt="Song cover" className="w-16 h-16 rounded-md mr-4" />
-            <div className="flex flex-col flex-grow overflow-hidden">
+            <div className="flex flex-col flex-grow overflow-hidden space-y-0.5">
                 <h3 className="text-base font-medium antialiased truncate">{trackName}</h3>
-                <p className="text-sm antialiased">{artistName} • {listeningTime} minutes</p>
+                <p className="text-sm antialiased truncate">{artistName} • {numberFormatter.format(listeningTime)} minutes</p>
             </div>
         </div>
     );

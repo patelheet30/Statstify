@@ -1,8 +1,10 @@
-import { Song } from "@/lib/entities";
+import { Song, Artist } from "@/lib/entities";
 import { fetchDataFromIndexedDB, gatherFileNames } from "./dbutils";
-import { getTracksInformation } from "./spotifyAPI";
+import { getTracksInformation, getArtistsInformation } from "./spotifyAPI";
 
-export async function processListeningHistory(updateLoadingText: (text: string) => void): Promise<Song[]> {
+const BATCHSIZE = 50;
+
+export async function processListeningHistory(updateLoadingText: (text: string) => void): Promise<{ songs: Song[], artists: Artist[] }> {
     updateLoadingText("Processing your listening history...");
 
     try {
@@ -21,6 +23,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
         }
 
         const songsMap: Map<string, Song> = new Map();
+        const artistsMap: Map<string, Artist> = new Map();
         const trackIDs = new Set<string>();
 
         for (const file of files) {
@@ -62,34 +65,81 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
         const sortedArray = Array.from(songsMap.values()).sort((a, b) => b.msPlayed - a.msPlayed);
 
         const allTrackIds = sortedArray.map((song) => song.trackID);
-        const batchSize = 50;
 
-        for (let i = 0; i < allTrackIds.length; i += batchSize) {
-            const batch = allTrackIds.slice(i, i + batchSize);
+        for (let i = 0; i < allTrackIds.length; i += BATCHSIZE) {
+            const batch = allTrackIds.slice(i, i + BATCHSIZE);
             try {
-            const trackInfo = await getTracksInformation(batch);
+                const trackInfo = await getTracksInformation(batch);
 
-            for (const song of sortedArray) {
-                const track = trackInfo.tracks.find((track: any) => track.id === song.trackID);
-                if (track) {
-                try {
-                    song.coverArtURLLarge = track.album.images[0].url;
-                    song.coverArtURLMedium = track.album.images[1].url;
-                    song.coverArtURLSmall = track.album.images[2].url;
-                } catch (error) {
-                    console.error(`Error processing song: ${song.trackName} (ID: ${song.trackID})`, error);
+                for (const song of sortedArray) {
+                    const track = trackInfo.tracks.find((track: any) => track.id === song.trackID);
+                    if (track) {
+                        try {
+                            song.coverArtURLLarge = track.album.images[0].url;
+                            song.coverArtURLMedium = track.album.images[1].url;
+                            song.coverArtURLSmall = track.album.images[2].url;
+
+                            const artistID = track.artists[0].id;
+                            if (artistsMap.has(artistID)) {
+                                const existingArtist = artistsMap.get(artistID)!;
+                                existingArtist.msPlayed += song.msPlayed;
+                            } else {
+                                const newArtist: Artist = {
+                                    name: track.artists[0].name,
+                                    id: artistID,
+                                    artistURLLarge: "N/A",
+                                    artistURLMedium: "N/A",
+                                    artistURLSmall: "N/A",
+                                    msPlayed: song.msPlayed,
+                                    whenPlayed: "N/A",
+                                    followers: 0,
+                                };
+                                artistsMap.set(artistID, newArtist);
+                            }
+
+                        } catch (error) {
+                            console.error(`Error processing song: ${song.trackName} (ID: ${song.trackID})`, error);
+                        }
+                    }
                 }
-                }
-            }
             } catch (error) {
-            console.error("Error processing batch:", batch, error);
+                console.error("Error processing batch:", batch, error);
             }
         }
 
-        return sortedArray;
+        updateLoadingText("Fetching artist information from the Spotify API (This may take several minutes)...");
+
+        const artistIds = Array.from(artistsMap.keys());
+        for (let i = 0; i < artistIds.length; i += BATCHSIZE) {
+            const batch = artistIds.slice(i, i + BATCHSIZE);
+
+            try {
+                const artistInfo = await getArtistsInformation(batch);
+
+                for (const artist of artistInfo.artists) {
+                    const existingArtist = artistsMap.get(artist.id);
+                    if (existingArtist) {
+                        try {
+                            existingArtist.artistURLLarge = artist.images[0].url;
+                            existingArtist.artistURLMedium = artist.images[1].url;
+                            existingArtist.artistURLSmall = artist.images[2].url;
+                            existingArtist.followers = artist.followers.total;
+                        } catch (error) {
+                            console.error(`Error processing artist: ${artist.name} (ID: ${artist.id})`, error);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error processing batch:", batch, error);
+            }
+        }
+
+        const sortedArtistsArray = Array.from(artistsMap.values()).sort((a, b) => b.msPlayed - a.msPlayed);
+
+        return { songs: sortedArray, artists: sortedArtistsArray };
     }
     catch (error) {
         console.error("Error processing listening history", error);
-        return [];
+        return { songs: [], artists: [] };
     }
 }

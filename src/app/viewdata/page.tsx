@@ -4,15 +4,18 @@ import Navbar from "@/components/NavBar";
 import { useUser } from "@/lib/User";
 import { useEffect, useState } from "react";
 import { gatherMapData } from "@/lib/dbutils";
-import { Song } from "@/lib/entities";
+import { Song, Artist } from "@/lib/entities";
 import SongCard from "@/components/SongCard";
+import ArtistCard from "@/components/ArtistCard";
 import { ChartBarDecreasing } from "lucide-react";
 
 export default function ViewData() {
   const { user } = useUser();
   const [songs, setSongs] = useState<Song[]>([]);
+  const [artists, setArtists] = useState<Artist[]>([]);
 
-  const topfifty = songs.slice(0, 50);
+  const topfiftysongs = songs.slice(0, 50);
+  const topfiftyartists = artists.slice(0, 50);
 
   useEffect(() => {
     if (!user) {
@@ -24,6 +27,14 @@ export default function ViewData() {
     async function fetchData() {
       const data = await gatherMapData("songs");
       setSongs(data);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await gatherMapData("artists");
+      setArtists(data);
     }
     fetchData();
   }, []);
@@ -40,13 +51,24 @@ export default function ViewData() {
             <h2 className="font-semibold text-zinc-400">Your Top Stats</h2>
           </div>
           <div>
-            {topfifty.map((song) => (
+            {topfiftysongs.map((song) => (
               <SongCard
                 key={song.trackID}
                 cover={song.coverArtURLSmall}
                 trackName={song.trackName}
                 artistName={song.artistName}
                 listeningTime={Math.floor(song.msPlayed / 60000)}
+              />)
+            )}
+          </div>
+          <div>
+            {topfiftyartists.map((artist) => (
+              <ArtistCard
+                key={artist.id}
+                artistName={artist.name}
+                artistImage={artist.artistURLSmall}
+                listeningTime={Math.floor(artist.msPlayed / 60000)}
+                followers={artist.followers}
               />)
             )}
           </div>

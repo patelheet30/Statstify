@@ -63,14 +63,15 @@ export default function Loading() {
       const success = await processUserData(timeout, setUser);
       if (success) {
         setLoadingText("Processing your listening history...");
-        const songsProcessed = await processListeningHistory(setLoadingText);
+        const { songs, artists } = await processListeningHistory(setLoadingText);
 
-        if (songsProcessed.length === 0) {
-          setLoadingText("No songs found in your data.");
+        if (songs.length === 0) {
+          setLoadingText("No listening history found.");
           await new Promise((resolve) => setTimeout(resolve, 2000));
           router.push("/");
         } else {
-          await storeMapDatainIndexedDB(new Map([["songs", songsProcessed]]));
+          await storeMapDatainIndexedDB(new Map([["songs", songs]]));
+          await storeMapDatainIndexedDB(new Map([["artists", artists]]));
           router.push("/viewdata");
         }
       }

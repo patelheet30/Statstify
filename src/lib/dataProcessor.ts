@@ -79,22 +79,24 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                             song.coverArtURLMedium = track.album.images[1].url;
                             song.coverArtURLSmall = track.album.images[2].url;
 
-                            const artistID = track.artists[0].id;
-                            if (artistsMap.has(artistID)) {
-                                const existingArtist = artistsMap.get(artistID)!;
-                                existingArtist.msPlayed += song.msPlayed;
-                            } else {
-                                const newArtist: Artist = {
-                                    name: track.artists[0].name,
-                                    id: artistID,
-                                    artistURLLarge: "N/A",
-                                    artistURLMedium: "N/A",
-                                    artistURLSmall: "N/A",
-                                    msPlayed: song.msPlayed,
-                                    whenPlayed: "N/A",
-                                    followers: 0,
-                                };
-                                artistsMap.set(artistID, newArtist);
+                            for (const artist of track.artists) {
+                                const artistID = artist.id;
+                                if (artistsMap.has(artistID)) {
+                                    const existingArtist = artistsMap.get(artistID)!;
+                                    existingArtist.msPlayed += song.msPlayed;
+                                } else {
+                                    const newArtist: Artist = {
+                                        name: artist.name,
+                                        id: artistID,
+                                        artistURLLarge: "N/A",
+                                        artistURLMedium: "N/A",
+                                        artistURLSmall: "N/A",
+                                        msPlayed: song.msPlayed,
+                                        whenPlayed: "N/A",
+                                        followers: 0,
+                                    };
+                                    artistsMap.set(artistID, newArtist);
+                                }
                             }
 
                         } catch (error) {

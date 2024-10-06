@@ -1,0 +1,26 @@
+.custom-scrollbar::-webkit-scrollbar {
+  width: 24px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #52525B;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ffffff; /* White scrollbar thumb */
+  border-radius: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* Lighter white on hover */
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: 24px;
+  scrollbar-color: #52525B transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: #A1A1AA transparent;
+}

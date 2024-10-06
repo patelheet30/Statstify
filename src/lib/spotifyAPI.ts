@@ -42,3 +42,19 @@ export const getArtistsInformation = async (artistIDs: string[]) => {
 
     return response.data;
 };
+
+export const getAlbumsInformation = async (albumId: string[]) => {
+    const accessToken = await getClientCredentialsToken();
+    const response = await axios.get(`https://api.spotify.com/v1/albums`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        },
+        params: {
+            ids: albumId.join(",")
+        }
+    });
+
+    console.log('Albums Information Response:', response.data);
+    
+    return response.data;
+};

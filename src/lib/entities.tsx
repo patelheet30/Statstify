@@ -20,3 +20,26 @@ export interface Artist {
     whenPlayed: string;
     followers: number;
 }
+
+interface AlbumTrack {
+  name: string;
+  explicit: boolean;
+  id: string;
+  disc_number: number;
+  track_number: number;
+  duration_ms: number;
+}
+
+export interface Album {
+    albumName: string;
+    albumID: string;
+    totalTracks: number;
+    albumURLLarge: string;
+    albumURLMedium: string;
+    albumURLSmall: string;
+    msPlayed: number;
+    whenPlayed: string;
+    songsListened: Song[];
+    songsInAlbum: AlbumTrack[];
+    releaseDate: string;
+}

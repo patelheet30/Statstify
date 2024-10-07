@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/lib/User";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -19,11 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark h=full">
       <body className={`${montserrat.className} h-full`}>
-        <UserProvider>
-          <div className="h-full">
-            {children}
-          </div>
-        </UserProvider>
+        <div className="h-full">
+          {children}
+        </div>
       </body>
     </html>
   );

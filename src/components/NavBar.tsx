@@ -5,17 +5,10 @@ import { Search, X } from "lucide-react";
 import React, { useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { format } from "date-fns";
+import { User } from "@/lib/entities";
 
 interface NavBarProps {
-    user: {
-        name: string;
-        email: string;
-        pfpURL: string;
-        birthdate: string;
-        age: number;
-        accountCreationDate: string;
-        gender: string;
-    } | null;
+    user: User | null;
 }
 
 

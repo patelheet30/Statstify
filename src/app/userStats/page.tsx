@@ -1,10 +1,9 @@
 "use client";
 
 import Navbar from "@/components/NavBar";
-import { useUser } from "@/lib/User";
 import { useEffect, useState } from "react";
 import { gatherMapData } from "@/lib/dbutils";
-import { Song, Artist, Album } from "@/lib/entities";
+import { Song, Artist, Album, User } from "@/lib/entities";
 import SongCard from "@/components/SongCard";
 import ArtistCard from "@/components/ArtistCard";
 import AlbumCard from "@/components/AlbumCard";
@@ -12,7 +11,7 @@ import { ChartBarDecreasing, X, Search } from "lucide-react";
 import { useRef } from "react";
 
 export default function ViewData() {
-  const { user } = useUser();
+  const [user, setUser] = useState<User | null>(null);
   const [songs, setSongs] = useState<Song[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -22,13 +21,9 @@ export default function ViewData() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!user) {
-      console.error("User not found");
-    }
-  }, [user]);
-
-  useEffect(() => {
     async function fetchData() {
+      const userData = await gatherMapData("user");
+      setUser(userData.user[0]);
       const songData = await gatherMapData("songs");
       setSongs(songData);
       const artistData = await gatherMapData("artists");

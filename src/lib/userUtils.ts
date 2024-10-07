@@ -1,9 +1,11 @@
 // src/lib/userUtils.ts
 import { fetchDataFromIndexedDB } from "@/lib/dbutils";
-import { User } from "@/lib/User";
+import { User } from "@/lib/entities";
 
-export async function processUserData(timeout: number, setUser: (user: User) => void) {
-  await new Promise((resolve) => setTimeout(resolve, timeout));
+export async function processUserData(updateLoadingText: (text: string) => void): Promise< {user: User[]} > {
+  updateLoadingText("Processing your User information...");
+
+  const userMap: Map<string, User> = new Map();
 
   try {
     const identifiersData = await fetchDataFromIndexedDB("Spotify Account Data/Identifiers.json");
@@ -19,12 +21,22 @@ export async function processUserData(timeout: number, setUser: (user: User) => 
     const gender = userData?.gender || "N/A";
 
 
-    setUser({ name, email, pfpURL, birthdate, age, accountCreationDate, gender });
-    console.log("User:", { name, email, pfpURL, birthdate, age, accountCreationDate, gender });
+    const user: User = {
+      name,
+      email,
+      pfpURL,
+      birthdate,
+      age,
+      accountCreationDate,
+      gender
+    };
 
-    return true;
+    userMap.set(name, user);
+
+    return { user: Array.from(userMap.values()) };
+
   } catch (error) {
     console.error("Error processing data", error);
-    return false;
+    return { user: [] };
   }
 }

@@ -3,7 +3,6 @@
 // src/app/loading/page.tsx
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/lib/User";
 import { processUserData } from "@/lib/userUtils";
 import { processListeningHistory } from "@/lib/dataProcessor";
 import { storeMapDatainIndexedDB } from "@/lib/dbutils";
@@ -12,7 +11,6 @@ export default function Loading() {
   const router = useRouter();
   const timeout = 2000;
   const hasProcessed = useRef(false);
-  const { setUser } = useUser();
   const [loadingText, setLoadingText] = useState("Processing your data.");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const barHeights = useRef<number[]>([]);
@@ -60,8 +58,10 @@ export default function Loading() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setLoadingText("Processing your User information...");
 
-      const success = await processUserData(timeout, setUser);
+      const success = await processUserData(setLoadingText);
       if (success) {
+        await storeMapDatainIndexedDB(new Map([["user", success]]));
+        console.log(success);
         setLoadingText("Processing your listening history...");
         const { songs, artists, albums } = await processListeningHistory(setLoadingText);
 
@@ -79,7 +79,7 @@ export default function Loading() {
     }
 
     processData();
-  }, [router, setUser]);
+  }, [router]);
 
 
 

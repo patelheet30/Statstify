@@ -43,3 +43,13 @@ export interface Album {
     songsInAlbum: AlbumTrack[];
     releaseDate: string;
 }
+
+export interface User {
+  name: string;
+  email: string;
+  pfpURL: string;
+  birthdate: string;
+  age: number;
+  accountCreationDate: string;
+  gender: string;
+}

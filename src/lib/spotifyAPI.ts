@@ -1,8 +1,22 @@
 import axios from "axios";
-import { getClientCredentialsToken } from "./spotifyAuth";
+
+const backendURL = "/api/spotify/token";
+
+let accessToken: string | null = null;
+let tokenExpirationTime: number | null = null;
+
+const fetchAccessToken = async () => {
+    const currentTime = Date.now();
+    if (!accessToken || !tokenExpirationTime || currentTime >= tokenExpirationTime) {
+        const response = await axios.get(backendURL);
+        
+        accessToken = response.data.access_token;
+        tokenExpirationTime = currentTime + 3600 * 1000;
+    }
+};
 
 export const getTrackInformation = async (trackId: string) => {
-    const accessToken = await getClientCredentialsToken();
+    await fetchAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -12,7 +26,7 @@ export const getTrackInformation = async (trackId: string) => {
 };
 
 export const getTracksInformation = async (trackIds: string[]) => {
-    const accessToken = await getClientCredentialsToken();
+    await fetchAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/tracks`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -28,7 +42,7 @@ export const getTracksInformation = async (trackIds: string[]) => {
 };
 
 export const getArtistsInformation = async (artistIDs: string[]) => {
-    const accessToken = await getClientCredentialsToken();
+    await fetchAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/artists`, {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -44,7 +58,7 @@ export const getArtistsInformation = async (artistIDs: string[]) => {
 };
 
 export const getAlbumsInformation = async (albumId: string[]) => {
-    const accessToken = await getClientCredentialsToken();
+    await fetchAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/albums`, {
         headers: {
             Authorization: `Bearer ${accessToken}`

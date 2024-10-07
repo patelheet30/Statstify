@@ -1,6 +1,6 @@
 # Statstify
 ## Re-discover your music preferences
-Statstify is a powerful tool that analyses your Spotify listening history to provide in-depth insights about your music preferences. Discover your most-played artists, albums, and tracks, and dive deep into your listening habits for specific albums or artists.
+Statstify is a powerful tool that analyses your Spotify listening history to provide in-depth insights about your music preferences. Discover your most-played artists, albums, and tracks, and dive deep into your listening habits.
 
 ## TODO
 - [ ] Logo Design
@@ -13,7 +13,7 @@ Statstify is a powerful tool that analyses your Spotify listening history to pro
 - [x] Link with Spotify to get images for album
 - [x] Process artist data
 - [x] Link with Spotify to get images for artists
-- [ ] Complete work with the sidebar showcasing top statistics alongside a search feature
+- [x] Complete work with the sidebar showcasing top statistics alongside a search feature
 - [ ] Present data on the larger div
 - [ ] Work out graphs and other methods to present data
 - [ ] Maybe optimise?????

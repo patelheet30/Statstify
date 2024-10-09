@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendURL = "/api/spotify/token";
+const backendUrl = "/api/spotify/token";
 
 let accessToken: string | null = null;
 let tokenExpirationTime: number | null = null;
@@ -8,7 +8,7 @@ let tokenExpirationTime: number | null = null;
 const fetchAccessToken = async () => {
     const currentTime = Date.now();
     if (!accessToken || !tokenExpirationTime || currentTime >= tokenExpirationTime) {
-        const response = await axios.get(backendURL);
+        const response = await axios.get(backendUrl);
         
         accessToken = response.data.access_token;
         tokenExpirationTime = currentTime + 3600 * 1000;
@@ -22,6 +22,9 @@ export const getTrackInformation = async (trackId: string) => {
             Authorization: `Bearer ${accessToken}`
         },
     });
+
+    console.log('Track Information Response:', response.data);
+    
     return response.data;
 };
 
@@ -58,7 +61,6 @@ export const getArtistsInformation = async (artistIDs: string[]) => {
 };
 
 export const getAlbumsInformation = async (albumId: string[]) => {
-    await fetchAccessToken();
     const response = await axios.get(`https://api.spotify.com/v1/albums`, {
         headers: {
             Authorization: `Bearer ${accessToken}`

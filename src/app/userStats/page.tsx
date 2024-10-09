@@ -51,7 +51,7 @@ export default function ViewData() {
         <div className="bg-neutral-900 rounded-lg flex-shrink-0 flex flex-col space-y-2 w-[25%]">
           <div className="flex flex-row items-center space-x-4 ml-4 mt-2 mb-4 pt-2 pl-2 flex-shrink-0">
             <ChartBarDecreasing size={36} className="stroke-zinc-400" />
-            <h2 className="font-semibold text-zinc-400">Your Top Stats</h2>
+            <h2 className="font-semibold text-zinc-400">Your Stats</h2>
           </div>
           <div className="flex flex-row items-center space-x-2 ml-2 pl-2 flex-shrink-0">
             {filter !== "None" && (

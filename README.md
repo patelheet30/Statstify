@@ -14,8 +14,8 @@ Statstify is a powerful tool that analyses your Spotify listening history to pro
 - [x] Process artist data
 - [x] Link with Spotify to get images for artists
 - [x] Complete work with the sidebar showcasing top statistics alongside a search feature
-- [ ] Present data on the larger div
-- [ ] Work out graphs and other methods to present data
+- [x] Present data on the larger div
+- [x] Work out graphs and other methods to present data
 - [ ] Maybe optimise?????
 - [ ] Make it live
 

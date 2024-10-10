@@ -40,10 +40,14 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                 const trackName = entry.master_metadata_track_name;
                 const artistName = entry.master_metadata_album_artist_name;
                 const albumName = entry.master_metadata_album_album_name;
+                const whenListened = entry.ts;
+                const dateListened = new Date(whenListened).toISOString().split('T')[0];
 
                 if (songsMap.has(trackID)) {
                     const existingSong = songsMap.get(trackID)!;
                     existingSong.msPlayed += msPlayed;
+
+                    existingSong.whenPlayed.push({date: dateListened, msPlayed: msPlayed});
                 } else {
                     const newSong: Song = {
                         trackName,
@@ -51,7 +55,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                         artistName,
                         albumName,
                         msPlayed,
-                        whenPlayed: "N/A",
+                        whenPlayed: [{date: dateListened, msPlayed: msPlayed}],
                         coverArtURLLarge: "N/A",
                         coverArtURLMedium: "N/A",
                         coverArtURLSmall: "N/A",
@@ -81,11 +85,21 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                             song.coverArtURLMedium = track.album.images[1].url;
                             song.coverArtURLSmall = track.album.images[2].url;
 
+
+
                             for (const artist of track.artists) {
                                 const artistID = artist.id;
                                 if (artistsMap.has(artistID)) {
                                     const existingArtist = artistsMap.get(artistID)!;
                                     existingArtist.msPlayed += song.msPlayed;
+                                    
+                                    const dateListened = new Date(song.whenPlayed[0].date).toISOString().split('T')[0];
+                                    for (const playEvent of song.whenPlayed) {
+                                        const dateListened = playEvent.date;
+                                        const msPlayed = playEvent.msPlayed;
+                                        existingArtist.whenPlayed.push({ date: dateListened, msPlayed });
+                                    }
+
                                 } else {
                                     const newArtist: Artist = {
                                         name: artist.name,
@@ -94,7 +108,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                                         artistURLMedium: "N/A",
                                         artistURLSmall: "N/A",
                                         msPlayed: song.msPlayed,
-                                        whenPlayed: "N/A",
+                                        whenPlayed: song.whenPlayed.map(playEvent => ({ date: playEvent.date, msPlayed: playEvent.msPlayed })),
                                         followers: 0,
                                     };
                                     artistsMap.set(artistID, newArtist);
@@ -106,6 +120,12 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                                 const existingAlbum = albumsMap.get(albumID)!;
                                 existingAlbum.msPlayed += song.msPlayed;
                                 existingAlbum.songsListened.push(song);
+
+                                for (const playEvent of song.whenPlayed) {
+                                    const dateListened = playEvent.date;
+                                    const msPlayed = playEvent.msPlayed;
+                                    existingAlbum.whenPlayed.push({ date: dateListened, msPlayed });
+                                }
                             } else {
                                 const newAlbum: Album = {
                                     albumName: track.album.name,
@@ -114,7 +134,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                                     albumURLMedium: track.album.images[1].url,
                                     albumURLSmall: track.album.images[2].url,
                                     msPlayed: song.msPlayed,
-                                    whenPlayed: "N/A",
+                                    whenPlayed: song.whenPlayed.map(playEvent => ({ date: playEvent.date, msPlayed: playEvent.msPlayed })),
                                     songsListened: [song],
                                     songsInAlbum: [],
                                     totalTracks: track.album.total_tracks,

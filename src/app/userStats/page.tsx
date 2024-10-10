@@ -9,6 +9,7 @@ import ArtistCard from "@/components/ArtistCard";
 import AlbumCard from "@/components/AlbumCard";
 import { ChartBarDecreasing, X, Search } from "lucide-react";
 import { useRef } from "react";
+import MonthBreakdown from "@/components/MonthBreakdown";
 
 export default function ViewData() {
   const [user, setUser] = useState<User | null>(null);
@@ -18,6 +19,7 @@ export default function ViewData() {
   const [filter, setFilter] = useState<"None" | "Song" | "Artist" | "Album">("None");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<Song | Artist | Album | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,6 +43,10 @@ export default function ViewData() {
   const viewableSongs = filteredSongs.slice(0, 25);
   const viewableArtists = filteredArtists.slice(0, 25);
   const viewableAlbums = filteredAlbums.slice(0, 25);
+
+  const handleItemClick = (item: Song | Artist | Album) => {
+    setSelectedItem(item);
+  }
 
   return (
     <div className="max-w-full flex flex-col h-screen p-2 overflow-hidden space-y-2">
@@ -133,41 +139,94 @@ export default function ViewData() {
             </div>
             <div>
               {(filter === "None" || filter === "Song") && viewableSongs.map((song) => (
-                <SongCard
-                  key={song.trackID}
-                  cover={song.coverArtURLSmall}
-                  trackName={song.trackName}
-                  artistName={song.artistName}
-                  listeningTime={Math.floor(song.msPlayed / 60000)}
-                />)
+                <div key={song.trackID} onClick={() => handleItemClick(song)}>
+                  <SongCard
+                    key={song.trackID}
+                    cover={song.coverArtURLSmall}
+                    trackName={song.trackName}
+                    artistName={song.artistName}
+                    listeningTime={Math.floor(song.msPlayed / 60000)}
+                  />
+                </div>
+              )
               )}
             </div>
             <div>
               {(filter === "None" || filter === "Artist") && viewableArtists.map((artist) => (
-                <ArtistCard
-                  key={artist.id}
-                  artistName={artist.name}
-                  artistImage={artist.artistURLSmall}
-                  listeningTime={Math.floor(artist.msPlayed / 60000)}
-                  followers={artist.followers}
-                />)
+                <div key={artist.id} onClick={() => handleItemClick(artist)}>
+                  <ArtistCard
+                    key={artist.id}
+                    artistName={artist.name}
+                    artistImage={artist.artistURLSmall}
+                    listeningTime={Math.floor(artist.msPlayed / 60000)}
+                    followers={artist.followers}
+                  />
+                </div>
+              )
               )}
             </div>
             <div>
               {(filter === "None" || filter === "Album") && viewableAlbums.map((album) => (
-                <AlbumCard
-                  key={album.albumID}
-                  albumName={album.albumName}
-                  albumCover={album.albumURLSmall}
-                  listeningTime={Math.floor(album.msPlayed / 60000)}
-                  releaseDate={album.releaseDate}
-                />)
+                <div key={album.albumID} onClick={() => handleItemClick(album)}>
+                  <AlbumCard
+                    key={album.albumID}
+                    albumName={album.albumName}
+                    albumCover={album.albumURLSmall}
+                    listeningTime={Math.floor(album.msPlayed / 60000)}
+                    releaseDate={album.releaseDate}
+                  />
+                </div>
+              )
               )}
             </div>
           </div>
         </div>
         <div className="bg-neutral-900 rounded-lg overflow-auto flex-grow w-[75%]">
           <h2>Information</h2>
+          {selectedItem && (
+            <div>
+              {selectedItem.hasOwnProperty('trackName') && (
+                <div>
+                  <h2>{(selectedItem as Song).trackName}</h2>
+                  <p>Artist: {(selectedItem as Song).artistName}</p>
+                  <p>Album: {(selectedItem as Song).albumName}</p>
+                  <p>Milliseconds Played: {(selectedItem as Song).msPlayed}</p>
+                  <h3>Month-by-Month Breakdown:</h3>
+                  {Array.isArray((selectedItem as Song).whenPlayed) ? (
+                    <MonthBreakdown whenPlayed={(selectedItem as Song).whenPlayed} />
+                  ) : (
+                    <p>N/A</p>
+                  )}
+                </div>
+              )}
+              {selectedItem.hasOwnProperty('followers') && (
+                <div>
+                  <h2>{(selectedItem as Artist).name}</h2>
+                  <p>Milliseconds Played: {(selectedItem as Artist).msPlayed}</p>
+                  <h3>Month-by-Month Breakdown:</h3>
+                  {Array.isArray((selectedItem as Artist).whenPlayed) ? (
+                    <MonthBreakdown whenPlayed={(selectedItem as Artist).whenPlayed} />
+                  ) : (
+                    <p>N/A</p>
+                  )}
+                </div>
+              )}
+              {selectedItem.hasOwnProperty('totalTracks') && (
+                <div>
+                  <h2>{(selectedItem as Album).albumName}</h2>
+                  <p>Milliseconds Played: {(selectedItem as Album).msPlayed}</p>
+                  <p>Total Tracks: {(selectedItem as Album).totalTracks}</p>
+                  <p>Release Date: {(selectedItem as Album).releaseDate}</p>
+                  <h3>Month-by-Month Breakdown:</h3>
+                  {Array.isArray((selectedItem as Album).whenPlayed) ? (
+                    <MonthBreakdown whenPlayed={(selectedItem as Album).whenPlayed} />
+                  ) : (
+                    <p>N/A</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

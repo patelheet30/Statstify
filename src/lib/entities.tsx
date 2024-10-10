@@ -4,7 +4,7 @@ export interface Song {
     artistName: string;
     albumName: string;
     msPlayed: number;
-    whenPlayed: string;
+    whenPlayed: {date: string; msPlayed: number}[];
     coverArtURLLarge: string;
     coverArtURLMedium: string;
     coverArtURLSmall: string;
@@ -17,7 +17,7 @@ export interface Artist {
     artistURLMedium: string;
     artistURLSmall: string;
     msPlayed: number;
-    whenPlayed: string;
+    whenPlayed: {date: string; msPlayed: number}[];
     followers: number;
 }
 
@@ -38,7 +38,7 @@ export interface Album {
     albumURLMedium: string;
     albumURLSmall: string;
     msPlayed: number;
-    whenPlayed: string;
+    whenPlayed: {date: string; msPlayed: number}[];
     songsListened: Song[];
     songsInAlbum: AlbumTrack[];
     releaseDate: string;

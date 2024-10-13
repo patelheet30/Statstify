@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import CustomTooltip from './Charts/CustomTooltip';
-import CustomLegend from './Charts/CustomLegend';
+import CustomTooltip from './charts/CustomTooltip';
+import CustomLegend from './charts/CustomLegend';
 
 interface PlayEvent {
   date: string;

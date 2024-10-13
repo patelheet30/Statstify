@@ -10,6 +10,9 @@ import AlbumCard from "@/components/AlbumCard";
 import { ChartBarDecreasing, X, Search } from "lucide-react";
 import { useRef } from "react";
 import MonthBreakdown from "@/components/MonthBreakdown";
+import SongDetails from "@/components/details/SongDetails";
+import ArtistDetails from "@/components/details/ArtistDetails";
+import AlbumDetails from "@/components/details/AlbumDetails";
 
 export default function ViewData() {
   const [user, setUser] = useState<User | null>(null);
@@ -47,6 +50,11 @@ export default function ViewData() {
   const handleItemClick = (item: Song | Artist | Album) => {
     setSelectedItem(item);
   }
+
+  const getMsPlayedForSong = (songId: string) => {
+    const song = songs.find((song) => song.trackID === songId);
+    return song ? song.msPlayed : 0;
+  };
 
   return (
     <div className="max-w-full flex flex-col h-screen p-2 overflow-hidden space-y-2">
@@ -182,48 +190,16 @@ export default function ViewData() {
           </div>
         </div>
         <div className="bg-neutral-900 rounded-lg overflow-auto flex-grow w-[75%]">
-          <h2>Information</h2>
           {selectedItem && (
             <div>
               {selectedItem.hasOwnProperty('trackName') && (
-                <div>
-                  <h2>{(selectedItem as Song).trackName}</h2>
-                  <p>Artist: {(selectedItem as Song).artistName}</p>
-                  <p>Album: {(selectedItem as Song).albumName}</p>
-                  <p>Milliseconds Played: {(selectedItem as Song).msPlayed}</p>
-                  <h3>Month-by-Month Breakdown:</h3>
-                  {Array.isArray((selectedItem as Song).whenPlayed) ? (
-                    <MonthBreakdown whenPlayed={(selectedItem as Song).whenPlayed} />
-                  ) : (
-                    <p>N/A</p>
-                  )}
-                </div>
+                <SongDetails song={selectedItem as Song} />
               )}
               {selectedItem.hasOwnProperty('followers') && (
-                <div>
-                  <h2>{(selectedItem as Artist).name}</h2>
-                  <p>Milliseconds Played: {(selectedItem as Artist).msPlayed}</p>
-                  <h3>Month-by-Month Breakdown:</h3>
-                  {Array.isArray((selectedItem as Artist).whenPlayed) ? (
-                    <MonthBreakdown whenPlayed={(selectedItem as Artist).whenPlayed} />
-                  ) : (
-                    <p>N/A</p>
-                  )}
-                </div>
+                <ArtistDetails artist={selectedItem as Artist} />
               )}
               {selectedItem.hasOwnProperty('totalTracks') && (
-                <div>
-                  <h2>{(selectedItem as Album).albumName}</h2>
-                  <p>Milliseconds Played: {(selectedItem as Album).msPlayed}</p>
-                  <p>Total Tracks: {(selectedItem as Album).totalTracks}</p>
-                  <p>Release Date: {(selectedItem as Album).releaseDate}</p>
-                  <h3>Month-by-Month Breakdown:</h3>
-                  {Array.isArray((selectedItem as Album).whenPlayed) ? (
-                    <MonthBreakdown whenPlayed={(selectedItem as Album).whenPlayed} />
-                  ) : (
-                    <p>N/A</p>
-                  )}
-                </div>
+                <AlbumDetails album={selectedItem as Album} getMsPlayedForSong={getMsPlayedForSong} />
               )}
             </div>
           )}

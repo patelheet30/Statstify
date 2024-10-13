@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "../customScrollbar.css";
+@import "../customCSS.css";
 
 :root {
   --foreground-rgb: 0, 0, 0;

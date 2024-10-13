@@ -139,6 +139,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                                     songsInAlbum: [],
                                     totalTracks: track.album.total_tracks,
                                     releaseDate: track.album.release_date,
+                                    artists: track.album.artists,
                                 };
                                 albumsMap.set(albumID, newAlbum);
                             }

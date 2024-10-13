@@ -42,6 +42,7 @@ export interface Album {
     songsListened: Song[];
     songsInAlbum: AlbumTrack[];
     releaseDate: string;
+    artists: { name: string; id: string }[];
 }
 
 export interface User {

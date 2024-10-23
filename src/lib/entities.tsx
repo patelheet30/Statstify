@@ -21,7 +21,7 @@ export interface Artist {
     followers: number;
 }
 
-interface AlbumTrack {
+export interface AlbumTrack {
   name: string;
   explicit: boolean;
   id: string;

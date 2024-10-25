@@ -8,6 +8,7 @@ export interface Song {
     coverArtURLLarge: string;
     coverArtURLMedium: string;
     coverArtURLSmall: string;
+    duration: number;
   }
 
 export interface Artist {
@@ -19,6 +20,7 @@ export interface Artist {
     msPlayed: number;
     whenPlayed: {date: string; msPlayed: number}[];
     followers: number;
+    songsListened: Song[];
 }
 
 export interface AlbumTrack {

@@ -47,7 +47,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                     const existingSong = songsMap.get(trackID)!;
                     existingSong.msPlayed += msPlayed;
 
-                    existingSong.whenPlayed.push({date: dateListened, msPlayed: msPlayed});
+                    existingSong.whenPlayed.push({ date: dateListened, msPlayed: msPlayed });
                 } else {
                     const newSong: Song = {
                         trackName,
@@ -55,10 +55,11 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                         artistName,
                         albumName,
                         msPlayed,
-                        whenPlayed: [{date: dateListened, msPlayed: msPlayed}],
+                        whenPlayed: [{ date: dateListened, msPlayed: msPlayed }],
                         coverArtURLLarge: "N/A",
                         coverArtURLMedium: "N/A",
                         coverArtURLSmall: "N/A",
+                        duration: 0,
                     };
                     songsMap.set(trackID, newSong);
                     trackIDs.add(trackID);
@@ -84,22 +85,21 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                             song.coverArtURLLarge = track.album.images[0].url;
                             song.coverArtURLMedium = track.album.images[1].url;
                             song.coverArtURLSmall = track.album.images[2].url;
-
-
+                            song.duration = track.duration_ms;
 
                             for (const artist of track.artists) {
                                 const artistID = artist.id;
                                 if (artistsMap.has(artistID)) {
                                     const existingArtist = artistsMap.get(artistID)!;
                                     existingArtist.msPlayed += song.msPlayed;
-                                    
+
                                     const dateListened = new Date(song.whenPlayed[0].date).toISOString().split('T')[0];
                                     for (const playEvent of song.whenPlayed) {
                                         const dateListened = playEvent.date;
                                         const msPlayed = playEvent.msPlayed;
                                         existingArtist.whenPlayed.push({ date: dateListened, msPlayed });
                                     }
-
+                                    existingArtist.songsListened.push(song);
                                 } else {
                                     const newArtist: Artist = {
                                         name: artist.name,
@@ -110,6 +110,7 @@ export async function processListeningHistory(updateLoadingText: (text: string) 
                                         msPlayed: song.msPlayed,
                                         whenPlayed: song.whenPlayed.map(playEvent => ({ date: playEvent.date, msPlayed: playEvent.msPlayed })),
                                         followers: 0,
+                                        songsListened: [song],
                                     };
                                     artistsMap.set(artistID, newArtist);
                                 }

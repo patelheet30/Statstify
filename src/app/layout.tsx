@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
+const jakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Statstify",
@@ -17,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark h=full">
-      <body className={`${montserrat.className} h-full`}>
+      <body className={`${jakartaSans.className} h-full`}>
         <div className="h-full">
           {children}
         </div>

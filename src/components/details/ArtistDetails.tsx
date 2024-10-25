@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from 'react';
-import { Artist, Song } from '@/lib/entities';
+import { Artist } from '@/lib/entities';
 import MonthBreakdown from '@/components/MonthBreakdown';
 import { Clock3, CalendarCog } from 'lucide-react';
 import {
@@ -12,7 +12,6 @@ import {
     PaginationEllipsis,
     PaginationLink,
 } from '@/components/ui/pagination';
-import { getTrackInformation } from '@/lib/spotifyAPI';
 
 interface ArtistDetailsProps {
     artist: Artist;

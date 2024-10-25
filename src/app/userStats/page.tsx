@@ -9,7 +9,6 @@ import ArtistCard from "@/components/ArtistCard";
 import AlbumCard from "@/components/AlbumCard";
 import { ChartBarDecreasing, X, Search } from "lucide-react";
 import { useRef } from "react";
-import MonthBreakdown from "@/components/MonthBreakdown";
 import SongDetails from "@/components/details/SongDetails";
 import ArtistDetails from "@/components/details/ArtistDetails";
 import AlbumDetails from "@/components/details/AlbumDetails";

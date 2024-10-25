@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { Search, X } from "lucide-react";
 import React, { useState } from "react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { format } from "date-fns";
 import { User } from "@/lib/entities";
 

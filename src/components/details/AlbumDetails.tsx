@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Album } from '@/lib/entities';
 import MonthBreakdown from '@/components/MonthBreakdown';
-import SongItem from './SongList';
+import SongItem from '@/components/details/SongList';
 import { Clock3, CalendarCog } from 'lucide-react';
 
 interface AlbumDetailsProps {

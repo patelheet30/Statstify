@@ -11,6 +11,8 @@ let cachedAccessToken: string | null = null;
 let cachedRefreshToken: string | null = null;
 let tokenExpirationTime: number | null = null;
 
+export const runtime = 'edge';
+
 const refreshAccessToken = async (refreshToken: string) => {
     const response = await axios.post(
         tokenUrl,

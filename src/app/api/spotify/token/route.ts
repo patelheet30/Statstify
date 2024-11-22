@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import querystring from 'querystring';
 
 const clientID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET;
@@ -14,19 +13,17 @@ let tokenExpirationTime: number | null = null;
 export const runtime = 'edge';
 
 const refreshAccessToken = async (refreshToken: string) => {
-    const response = await axios.post(
-        tokenUrl,
-        querystring.stringify({
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-        }),
-        {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: "Basic " + Buffer.from(clientID + ":" + clientSecret).toString("base64"),
-            },
-        }
-    );
+    const params = new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+    });
+
+    const response = await axios.post(tokenUrl, params.toString(), {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Basic " + btoa(`${clientID}:${clientSecret}`),
+        },
+    });
 
     return response.data;
 };
@@ -34,7 +31,6 @@ const refreshAccessToken = async (refreshToken: string) => {
 const getClientCredentialsToken = async () => {
     const currentTime = Date.now();
     
-    // Try refresh token first if available
     if (cachedRefreshToken) {
         try {
             const refreshedTokens = await refreshAccessToken(cachedRefreshToken);
@@ -45,25 +41,21 @@ const getClientCredentialsToken = async () => {
             tokenExpirationTime = currentTime + refreshedTokens.expires_in * 1000;
             return cachedAccessToken;
         } catch (error) {
-            // If refresh fails, fall back to client credentials
             cachedRefreshToken = null;
         }
     }
 
-    // Fall back to client credentials flow
     if (!cachedAccessToken || !tokenExpirationTime || currentTime >= tokenExpirationTime) {
-        const response = await axios.post(
-            tokenUrl,
-            querystring.stringify({
-                grant_type: "client_credentials",
-            }),
-            {
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    Authorization: "Basic " + Buffer.from(clientID + ":" + clientSecret).toString("base64"),
-                },
-            }
-        );
+        const params = new URLSearchParams({
+            grant_type: "client_credentials"
+        });
+
+        const response = await axios.post(tokenUrl, params.toString(), {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: "Basic " + btoa(`${clientID}:${clientSecret}`),
+            },
+        });
 
         cachedAccessToken = response.data.access_token;
         tokenExpirationTime = currentTime + response.data.expires_in * 1000;
@@ -78,21 +70,18 @@ export async function GET(request: NextRequest) {
         const code = searchParams.get('code');
         
         if (code) {
-            // Handle authorization code flow
-            const response = await axios.post(
-                tokenUrl,
-                querystring.stringify({
-                    grant_type: 'authorization_code',
-                    code,
-                    redirect_uri: redirectUri,
-                }),
-                {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        Authorization: "Basic " + Buffer.from(clientID + ":" + clientSecret).toString("base64"),
-                    },
-                }
-            );
+            const params = new URLSearchParams({
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: redirectUri!,
+            });
+
+            const response = await axios.post(tokenUrl, params.toString(), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Authorization: "Basic " + btoa(`${clientID}:${clientSecret}`),
+                },
+            });
             
             cachedAccessToken = response.data.access_token;
             cachedRefreshToken = response.data.refresh_token;
@@ -105,7 +94,6 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // Default client credentials flow
         const token = await getClientCredentialsToken();
         return NextResponse.json({ 
             access_token: token,

@@ -4,7 +4,7 @@
 import { Search, X } from "lucide-react";
 import React, { useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { format } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { User } from "@/lib/entities";
 
 interface NavBarProps {
@@ -18,7 +18,15 @@ const Navbar: React.FC<NavBarProps> = ({ user }) => {
 
     const formatDate = (dateUnformat: string | undefined) => {
         if (!dateUnformat) return "N/A";
-        const dateFormat = new Date(dateUnformat);
+        
+        // Parse the ISO date string
+        const dateFormat = parseISO(dateUnformat);
+        
+        // Validate the date
+        if (!isValid(dateFormat)) {
+            return "Invalid Date";
+        }
+        
         return format(dateFormat, "do MMM yyyy");
     }
 
